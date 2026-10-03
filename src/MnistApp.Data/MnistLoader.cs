@@ -12,7 +12,7 @@ namespace MnistApp.Data
 
             if(Directory.Exists(caminho))
             {
-                string[] dataset = Directory.GetFiles(caminho, "*");
+                string[] dataset = Directory.GetFiles(caminho, "");
                 foreach(string dados in dataset)
                 {
                     string pular = Path.GetFileName(dados);
@@ -22,7 +22,10 @@ namespace MnistApp.Data
                     using(var stream = File.OpenRead(dados))
                     {
                         stream.ReadExactly(bytes,0,4);
-                    }        
+                    }
+                    Console.WriteLine($"Ficheiro: {pular}");
+                    Console.WriteLine($"Bytes: {bytes[0]:X2} {bytes[1]:X2} {bytes[2]:X2} {bytes[3]:X2}");
+
                     var val = new MnistValidator(bytes);
                     if(!val.Comparar())
                     {

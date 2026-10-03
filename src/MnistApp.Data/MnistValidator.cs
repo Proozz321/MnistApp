@@ -7,7 +7,8 @@ namespace MnistApp.Data
     public class MnistValidator
     {
         private byte[] Bytes {get; set;}
-        private string caminho = "/home/proozz/MnistApp/src/MnistApp.Data/number.txt";
+        private const int MagicImagens  = 2051; // 0x00000803
+        private const int MagicEtiquetas = 2049; // 0x00000801
         
         //recebe bytes 
         public MnistValidator(byte[] bytes)
@@ -19,29 +20,14 @@ namespace MnistApp.Data
 
         public bool Comparar()
         {
-
             //faz o reverse nos bytes e converte para int32
             Reverse();
-            int MagicLido = BitConverter.ToInt32(Bytes,0);
-
-            //confirma se o caminho existe
-            if(!File.Exists(caminho))
-            {
-                throw new FileNotFoundException($"O arquivo number.txt não foi encontrado em: {caminho}");
-            }
+            int MagicLido = BitConverter.ToInt32(Bytes,0);  
             
-            //lê linha por linha e compara com o numero magico
-            foreach(string linha in File.ReadAllLines(caminho))
+            //comparar
+            if(MagicLido == MagicImagens || MagicLido == MagicEtiquetas)
             {
-                //transforma em string em int e cria variavel valorlido
-                if(int.TryParse(linha.Trim(), out int ValorLido))
-                {
-                    //comparar
-                    if(MagicLido == ValorLido)
-                    {
-                        return true;
-                    }
-                }
+                return true;
             }
             return false; //valor incorreto
         }

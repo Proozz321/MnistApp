@@ -482,3 +482,5 @@ $RECYCLE.BIN/
 *.swp
 datasets/*-ubyte
 !datasets/.gitkeep
+!datasets/.gitkeep
+datasets/emnist-*

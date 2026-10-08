@@ -40,6 +40,12 @@ namespace MnistApp.Data
             using var reader = AbrirFicheiro(ficheiro);
 
             byte[] magic = reader.ReadBytes(4);
+            
+            if(!new MnistValidator(magic).Imagens())
+            {
+                throw new InvalidDataException("ficheiro de Imagens Invalido");
+            }
+
             int total = LerInt32(reader);
             int linhas = LerInt32(reader);
             int colunas = LerInt32(reader);

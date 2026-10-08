@@ -5,7 +5,7 @@ using System.Buffers.Binary;
 
 namespace MnistApp.Data
 {
-    class MnistLoader
+    public class MnistLoader
     {
         private static readonly string[] Dataset =
         {

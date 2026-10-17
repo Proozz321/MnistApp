@@ -3,14 +3,21 @@
 // Recebe dados que represeta uma imagem
 public class MnistImage
 {
-    private const int Tpx = 28 * 28; 
+    public const int TotalPixeis = 28 * 28; 
     
-    public float[] Pixels {get; set;}
-    public int Label {get; set;}
+    public float[] Pixels {get;}
+    public int Label {get;}
 
-    public MnistImage(int label)
+    public MnistImage(float[] pixels, int label)
     {
-        this.Pixels = new float[Tpx];
-        this.Label = label;
+        ArgumentNullException.ThrowIfNull(pixels);
+
+        if(pixels.Length != TotalPixeis)
+        {
+            throw new ArgumentException("pixeis não corresponde ao total esperado");
+        }
+
+        Pixels = pixels;
+        Label = label;
     }
 }

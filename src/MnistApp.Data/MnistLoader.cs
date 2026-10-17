@@ -28,7 +28,7 @@ namespace MnistApp.Data
                
                 if(!new MnistValidator(magic).Comparar())
                 {
-                    throw new FileNotFoundException("Ficheiro em falta no dataset.", caminho);
+                    throw new InvalidDataException("Ficheiro em falta no dataset." + caminho);
                 }
 
                 Console.WriteLine("Valido: " + nome);
@@ -89,6 +89,27 @@ namespace MnistApp.Data
             }
             return resultado;
         }
+        
+        public List<MnistImage> CarregarImagens(string ficheiroImagens,string ficheiroEtiquetas, int itens)
+        {
+            byte[][] brutas = LerImagens(ficheiroImagens, itens);
+            byte[] etiquetas = LerEtiquetas(ficheiroEtiquetas, itens);
+
+            var resultado = new List<MnistImage>();
+
+            for(int i = 0; i < brutas.Length; i++)
+            {
+                float[] pixeis = new float[MnistImage.TotalPixeis];
+
+                for(int j = 0; j < pixeis.Length; j++)
+                {
+                    pixeis[j] = brutas[i][j] / 255f;
+                }
+                resultado.Add(new MnistImage(pixeis, etiquetas[i]));
+            }
+            return resultado;
+        }
+
     }
 }
 

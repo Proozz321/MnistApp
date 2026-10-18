@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MnistApp.Data\MnistApp.Data.csproj" />
+    <ProjectReference Include="..\MnistApp.Core\MnistApp.Core.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

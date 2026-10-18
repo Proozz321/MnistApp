@@ -1,76 +1,38 @@
+using MnistApp.Core;
 using MnistApp.Data;
 
-string pasta = "/home/proozz/MnistApp/datasets";
+
+string pasta = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),"MnistApp", "datasets");
+
 var loader = new MnistLoader();
+loader.ValidarDataset(pasta);
 
-try
+// 1. Carregar 5 imagens já com etiqueta (o que o Data entrega)
+List<MnistImage> imagens = loader.CarregarImagens(
+    Path.Combine(pasta, "emnist-balanced-train-images-idx3-ubyte"),
+    Path.Combine(pasta, "emnist-balanced-train-labels-idx1-ubyte"),
+    5);
+
+// 2. Converter para o formato do ML.NET (o que o Core faz)
+List<AmostraEmnist> amostras = ConversorAmostras.DevolverAmostras(imagens);
+
+Console.WriteLine($"\nImagens: {imagens.Count} | Amostras: {amostras.Count}");
+
+// 3. Comparar cada amostra com a imagem de origem
+for (int i = 0; i < amostras.Count; i++)
 {
-    // 1. Confirmar que os 4 ficheiros existem e têm magic number válido
-    loader.ValidarDataset(pasta);
+    bool etiquetaIgual = amostras[i].Label == imagens[i].Label;
+    bool tamanhoCerto = amostras[i].Pixels.Length == MnistImage.TotalPixeis;
 
-    // 2. Carregar 5 imagens já com etiqueta e píxeis normalizados (0 a 1)
-    List<MnistImage> lista = loader.CarregarImagens(
-        Path.Combine(pasta, "emnist-balanced-train-images-idx3-ubyte"),
-        Path.Combine(pasta, "emnist-balanced-train-labels-idx1-ubyte"),
-        5);
-
-    // 3. Tabela que converte o número da etiqueta no caractere
-    Dictionary<int, char> mapa = CarregarMapa(
-        Path.Combine(pasta, "emnist-balanced-mapping.txt"));
-
-    // 4. Mostrar cada imagem no terminal
-    for (int i = 0; i < lista.Count; i++)
-    {
-        int etiqueta = lista[i].Label;
-        string caractere = mapa.TryGetValue(etiqueta, out char c) ? c.ToString() : "?";
-
-        Console.WriteLine($"\nImagem {i}: etiqueta {etiqueta} = '{caractere}'");
-        Desenhar(lista[i].Pixels);
-    }
-}
-catch (Exception erro) when (erro is IOException || erro is InvalidDataException)
-{
-    // Ficheiro em falta ou ficheiro que não é IDX
-    Console.WriteLine("Erro ao carregar o dataset: " + erro.Message);
+    Console.WriteLine(
+        $"Amostra {i}: Label {amostras[i].Label}, píxeis {amostras[i].Pixels.Length}, " +
+        (etiquetaIgual && tamanhoCerto ? "OK" : "ERRO"));
 }
 
-// Os píxeis são float entre 0 e 1, por isso o limite do '#' é 0.25f
-static void Desenhar(float[] pixeis)
-{
-    const int Lado = 28;
+// 4. Cada amostra deve ter o seu array de píxeis (se der True, o array foi partilhado entre imagens)
+Console.WriteLine("\nAmostras 0 e 1 partilham o array? " +
+    ReferenceEquals(amostras[0].Pixels, amostras[1].Pixels));
 
-    for (int linha = 0; linha < Lado; linha++)
-    {
-        for (int coluna = 0; coluna < Lado; coluna++)
-        {
-            Console.Write(pixeis[linha * Lado + coluna] > 0.25f ? '#' : ' ');
-        }
-        Console.WriteLine();
-    }
-}
-
-// Lê o mapeamento: cada linha tem "etiqueta códigoASCII" (ex.: "45 114" = 'r')
-static Dictionary<int, char> CarregarMapa(string caminho)
-{
-    var mapa = new Dictionary<int, char>();
-
-    if (!File.Exists(caminho))
-    {
-        Console.WriteLine("Aviso: ficheiro de mapeamento não encontrado, os caracteres aparecem como '?'.");
-        return mapa;
-    }
-
-    foreach (string linha in File.ReadAllLines(caminho))
-    {
-        string[] partes = linha.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
-        if (partes.Length == 2
-            && int.TryParse(partes[0], out int etiqueta)
-            && int.TryParse(partes[1], out int codigo))
-        {
-            mapa[etiqueta] = (char)codigo;
-        }
-    }
-
-    return mapa;
-}
+// 5. A amostra guarda a referência do MnistImage, sem copiar (decisão tomada)
+Console.WriteLine("Amostra 0 usa o array do MnistImage 0? " +
+    ReferenceEquals(amostras[0].Pixels, imagens[0].Pixels));

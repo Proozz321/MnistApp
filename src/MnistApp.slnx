@@ -1,4 +1,7 @@
 <Solution>
   <Project Path="MnistApp.App/MnistApp.App.csproj" />
+  <Project Path="MnistApp.Core/MnistApp.Core.csproj" />
+  <Project Path="MnistApp.Data/MnistApp.Data.csproj" />
   <Project Path="MnistApp.Demo/MnistApp.Demo.csproj" />
+  <Project Path="MnistApp.Tests/MnistApp.Tests.csproj" />
 </Solution>

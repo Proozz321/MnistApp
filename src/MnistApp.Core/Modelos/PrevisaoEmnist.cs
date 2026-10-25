@@ -9,6 +9,5 @@ namespace MnistApp.Core
 
         [ColumnName("Score")]
         public float[] Score {get; set;}
-        
     }
 }

@@ -6,7 +6,6 @@ namespace MnistApp.Core
 {
     public class AmostraEmnist
     {
-        [ColumnName("Features")]
         [VectorType(MnistImage.TotalPixeis)]
         public float[] Pixels {get; set;}
         

@@ -7,7 +7,7 @@ namespace MnistApp.Data
 {
     public class MnistValidator
     {
-        private byte[] _Bytes;
+        private readonly byte[] _Bytes;
         private const int MagicImagens  = 2051; // 0x00000803
         private const int MagicEtiquetas = 2049; // 0x00000801
         

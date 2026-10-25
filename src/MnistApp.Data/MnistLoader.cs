@@ -28,7 +28,7 @@ namespace MnistApp.Data
                
                 if(!new MnistValidator(magic).Comparar())
                 {
-                    throw new InvalidDataException("Ficheiro em falta no dataset." + caminho);
+                    throw new InvalidDataException("Magic number inválido" + caminho);
                 }
 
                 Console.WriteLine("Valido: " + nome);
@@ -97,6 +97,11 @@ namespace MnistApp.Data
 
             var resultado = new List<MnistImage>();
 
+            if( brutas.Length != etiquetas.Length)
+            {
+                throw new InvalidDataException("O número de imagens e de etiquetas não coincide.");
+            }
+
             for(int i = 0; i < brutas.Length; i++)
             {
                 float[] pixeis = new float[MnistImage.TotalPixeis];
@@ -109,7 +114,6 @@ namespace MnistApp.Data
             }
             return resultado;
         }
-
     }
 }
 
